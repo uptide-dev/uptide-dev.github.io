@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # No private planning document and no private identifier, as in uptide-dev/uptide.
+      # The denylist is the UPTIDE_PRIVATE_DENYLIST secret; scripts/private-material.mjs
+      # decides which scan runs on which event.
+      - name: No private material
+        env:
+          UPTIDE_PRIVATE_DENYLIST: ${{ secrets.UPTIDE_PRIVATE_DENYLIST }}
+          EVENT: ${{ github.event_name }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          REPO: ${{ github.repository }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+        run: node scripts/private-material.mjs
+      - name: The page's own checks
+        run: node --test 'test/*.test.mjs'
