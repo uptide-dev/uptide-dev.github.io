@@ -12,7 +12,7 @@ npx serve site         # or any static file server; open http://localhost:3000
 
 | File | What it is |
 | --- | --- |
-| `index.html` | The page. Design tokens are the same as the list/check HTML report (`packages/cli/src/html/assets.ts`); light and dark follow the system. |
+| `index.html` | The page. Design tokens are the same as the list/check HTML report ([`packages/cli/src/html/assets.ts`](https://github.com/uptide-dev/uptide/blob/main/packages/cli/src/html/assets.ts) in uptide-dev/uptide); light and dark follow the system. |
 | `favicon.svg` | The logo mark, blue in light mode and light blue in dark mode. |
 | `og.png` | Social preview, 1280×640. Used for `og:image` and `twitter:image`, and meant for the repository's social preview setting. |
 | `og-image.html` | Source of `og.png`. Render it at 1280×640 with a headless browser and save a PNG screenshot. |
@@ -23,7 +23,7 @@ npx serve site         # or any static file server; open http://localhost:3000
 `.github/workflows/pages.yml` publishes this directory to GitHub Pages on every push to `main`
 that changes `site/`, as it is: no build step. The canonical URL, `og:url`, `og:image` and
 `twitter:image` are written `%SITE_URL%` in `index.html`, and the workflow replaces them with
-its `SITE_URL` (now `https://uptide-dev.github.io/uptide/`) just before upload. To move the
+its `SITE_URL` (now `https://uptide-dev.github.io/`) just before upload. To move the
 page to a domain, change that one value.
 
 ## Where the numbers come from
@@ -35,7 +35,8 @@ Every number on the page is printed output, never edited:
   repository root (`npx uptide list`). Rows are trimmed. Latest versions and advisories come
   from the registry at run time, so a rerun prints different numbers: when you refresh the
   page, rerun and replace the block and the four tiles together, and update the footnote.
-- `check` and `fix` on `fixtures/repos/storefront`: the same blocks as the README's "Before
-  and after". If those numbers change, change them in both places.
+- `check` and `fix` on [`fixtures/repos/storefront`](https://github.com/uptide-dev/uptide/tree/main/fixtures/repos/storefront):
+  the same blocks as the uptide README's "Before and after". If those numbers change, change
+  them in both repositories.
 - Timings in the hero note: `list` on the storefront fixture (about a second) and on the
   supabase commit above (20 seconds).
