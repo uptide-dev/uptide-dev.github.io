@@ -40,9 +40,14 @@
 
 /* Design tokens: the same values as the list/check HTML report (packages/cli/src/html/assets.ts). */
 :root{color-scheme:light;--bg:#F4F2EC;--surface:#FAF9F5;--line:#D5D2C8;--text:#22211E;--body:#57554F;--dim:#76736B;--accent:#1D63C4;--ok:#28724A;--warn:#996014;--bad:#B63C37;
-  --display:'Space Grotesk',system-ui,sans-serif;--sans:'Instrument Sans',system-ui,-apple-system,sans-serif;--mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;--gx:40px}
-@media (prefers-color-scheme:dark){:root:not([data-theme=light]){color-scheme:dark;--bg:#131210;--surface:#1B1A17;--line:#36342F;--text:#F0EEE7;--body:#BCB9AF;--dim:#918E83;--accent:#7CC4FF;--ok:#86C99F;--warn:#E8B66B;--bad:#ED9990}}
-:root[data-theme=dark]{color-scheme:dark;--bg:#131210;--surface:#1B1A17;--line:#36342F;--text:#F0EEE7;--body:#BCB9AF;--dim:#918E83;--accent:#7CC4FF;--ok:#86C99F;--warn:#E8B66B;--bad:#ED9990}
+  --display:'Space Grotesk',system-ui,sans-serif;--sans:'Instrument Sans',system-ui,-apple-system,sans-serif;--mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;--gx:40px;
+  /* The logo's two blues, the same in both themes. */
+  --logo-wave:#7CC4FF;--logo-line:#3E7FD9;
+  /* CLI output is always a dark terminal, in both themes. */
+  --term:#131210;--term-bar:#1B1A17;--term-line:#2B2925;--term-text:#D9D5CC;--term-dim:#8C867B;
+  --t-red:#FF8A80;--t-amber:#F5B94A;--t-green:#6EDB9A;--t-blue:#7CC4FF;--t-white:#F4F2EC}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){color-scheme:dark;--bg:#131210;--surface:#1B1A17;--line:#36342F;--text:#F0EEE7;--body:#BCB9AF;--dim:#918E83;--accent:#7CC4FF;--ok:#86C99F;--warn:#E8B66B;--bad:#ED9990;--term:#0C0B0A;--term-bar:#161513}}
+:root[data-theme=dark]{color-scheme:dark;--bg:#131210;--surface:#1B1A17;--line:#36342F;--text:#F0EEE7;--body:#BCB9AF;--dim:#918E83;--accent:#7CC4FF;--ok:#86C99F;--warn:#E8B66B;--bad:#ED9990;--term:#0C0B0A;--term-bar:#161513}
 
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;overflow-x:clip}
@@ -69,7 +74,8 @@ code.wrap{white-space:normal}
 .bar{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 .bar-inner{height:64px;padding:0 var(--gx);display:flex;align-items:center;justify-content:space-between;gap:24px;border-left:1px solid var(--line);border-right:1px solid var(--line)}
 .brand{display:flex;align-items:center;gap:9px;color:var(--text);text-decoration:none;font:600 24px var(--display);letter-spacing:-.04em}
-.brand svg{color:var(--accent);width:30px;height:30px;flex-shrink:0}
+.brand svg{width:30px;height:30px;flex-shrink:0}
+.brand .wave{stroke:var(--logo-wave)} .brand .base{stroke:var(--logo-line)}
 .bar nav{display:flex;gap:24px;font:500 11.5px var(--mono);letter-spacing:.13em;text-transform:uppercase}
 .bar nav a{color:var(--body);text-decoration:none}
 .bar nav a:hover{color:var(--accent)}
@@ -96,15 +102,16 @@ code.wrap{white-space:normal}
 .actions{display:flex;flex-wrap:wrap;gap:10px}
 .hero .out{margin-top:56px;border-bottom:0}
 
-/* terminal output (the report's pre) */
-.out{margin:0;border:1px solid var(--line);background:var(--surface);overflow:hidden}
-.out-head{display:flex;justify-content:space-between;gap:16px;padding:10px 16px;border-bottom:1px solid var(--line);font:11px var(--mono);letter-spacing:.06em;color:var(--dim)}
-.out pre{margin:0;padding:18px 20px 20px;font:12.5px/1.75 var(--mono);color:var(--text);overflow-x:auto;white-space:pre;tab-size:2}
-.out .d{color:var(--dim)} .out .b{color:var(--bad)} .out .w{color:var(--warn)} .out .g{color:var(--ok)} .out .a{color:var(--accent)} .out strong{font-weight:600}
+/* terminal output: a dark terminal in both themes */
+.out{margin:0;border:1px solid var(--term-line);background:var(--term);color:var(--term-text);overflow:hidden}
+.out-head{display:flex;justify-content:space-between;gap:16px;padding:10px 16px;border-bottom:1px solid var(--term-line);background:var(--term-bar);font:11px var(--mono);letter-spacing:.06em;color:var(--term-dim)}
+.out-head a{color:var(--t-blue)}
+.out pre{margin:0;padding:18px 20px 20px;font:12.5px/1.75 var(--mono);color:var(--term-text);overflow-x:auto;white-space:pre;tab-size:2}
+.out .d{color:var(--term-dim)} .out .b{color:var(--t-red)} .out .w{color:var(--t-amber)} .out .g{color:var(--t-green)} .out .a{color:var(--t-blue)} .out strong{font-weight:600;color:var(--t-white)}
 .diff pre{padding:14px 0}
 .diff .l{display:block;padding:0 20px}
-.diff .del{background:color-mix(in srgb,var(--bad) 10%,transparent);color:var(--bad)}
-.diff .add{background:color-mix(in srgb,var(--ok) 11%,transparent);color:var(--ok)}
+.diff .del{background:rgba(255,110,100,.10);color:#FFB4AE}
+.diff .add{background:rgba(91,228,155,.10);color:#A8F0C6}
 
 /* sections */
 section{border-bottom:1px solid var(--line)}
@@ -201,7 +208,7 @@ footer .brand svg{width:22px;height:22px}
 <header class="bar">
   <div class="bar-inner">
     <a class="brand" href="#top" aria-label="Uptide home">
-      <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M3 23c4.5 0 6.8-2.6 8.6-6.4C13.6 12.2 16.2 8 21.2 8c3.9 0 6.8 2.6 6.8 5.8 0 2.4-1.8 4.1-4.1 4.1-1.9 0-3.1-1.2-3.1-2.8" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 27.5h26" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+      <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M3 23c4.5 0 6.8-2.6 8.6-6.4C13.6 12.2 16.2 8 21.2 8c3.9 0 6.8 2.6 6.8 5.8 0 2.4-1.8 4.1-4.1 4.1-1.9 0-3.1-1.2-3.1-2.8" class="wave" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 27.5h26" class="base" stroke-width="3" stroke-linecap="round"/></svg>
       uptide
     </a>
     <nav aria-label="Sections">
@@ -246,7 +253,7 @@ footer .brand svg{width:22px;height:22px}
     simple-git                <span class="b">dev · 3 advisories (1 critical), needs 4.0.1 (major)</span>
     smol-toml                 <span class="b">1 advisory (1 moderate), fixed in 1.9.0 (minor, same major)</span>
     <span class="d">…</span></pre>
-    <div class="out-head" style="border-top:1px solid var(--line);border-bottom:0"><a href="#output">Full output below ↓</a><span>first 3 of 12 urgent rows</span></div>
+    <div class="out-head" style="border-top:1px solid var(--term-line);border-bottom:0"><a href="#output">Full output below ↓</a><span>first 3 of 12 urgent rows</span></div>
   </figure>
 </section>
 
@@ -575,7 +582,7 @@ stripe (packages/api)   14.25.0 → 23.0.0   9 majors behind · latest on npm   
 <footer>
   <div class="inner">
     <a class="brand" href="#top" aria-label="Uptide home">
-      <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M3 23c4.5 0 6.8-2.6 8.6-6.4C13.6 12.2 16.2 8 21.2 8c3.9 0 6.8 2.6 6.8 5.8 0 2.4-1.8 4.1-4.1 4.1-1.9 0-3.1-1.2-3.1-2.8" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 27.5h26" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+      <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M3 23c4.5 0 6.8-2.6 8.6-6.4C13.6 12.2 16.2 8 21.2 8c3.9 0 6.8 2.6 6.8 5.8 0 2.4-1.8 4.1-4.1 4.1-1.9 0-3.1-1.2-3.1-2.8" class="wave" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 27.5h26" class="base" stroke-width="3" stroke-linecap="round"/></svg>
       uptide
     </a>
     <nav aria-label="Footer">

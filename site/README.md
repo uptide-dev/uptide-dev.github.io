@@ -13,7 +13,7 @@ npx serve site         # or any static file server; open http://localhost:3000
 | File | What it is |
 | --- | --- |
 | `index.html` | The page. Design tokens are the same as the list/check HTML report ([`packages/cli/src/html/assets.ts`](https://github.com/uptide-dev/uptide/blob/main/packages/cli/src/html/assets.ts) in uptide-dev/uptide); light and dark follow the system. |
-| `favicon.svg` | The logo mark, blue in light mode and light blue in dark mode. |
+| `favicon.svg` | The logo mark in its two blues (`#7CC4FF` wave, `#3E7FD9` line), the same in both themes. |
 | `og.png` | Social preview, 1280×640. Used for `og:image` and `twitter:image`, and meant for the repository's social preview setting. |
 | `og-image.html` | Source of `og.png`. Render it at 1280×640 with a headless browser and save a PNG screenshot. |
 | `fonts/` | Space Grotesk, Instrument Sans and IBM Plex Mono, Latin subsets (from Fontsource 5.3.0), each under the SIL Open Font License 1.1; the license texts are next to them. |
