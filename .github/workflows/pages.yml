@@ -1,11 +1,14 @@
 name: Pages
 
-# Publishes site/ to GitHub Pages as it is, with no build step: on a push to main that
-# changes it, or by hand. See site/README.md.
+# Publishes the landing page (site/, as it is) at / and the docs (docs-site/, built with
+# Starlight from uptide-dev/uptide's docs/ folder) at /docs. The docs live in the other
+# repository, so the site is rebuilt on every push to main here, once a day to pick up docs
+# changes there, and by hand. See README.md.
 on:
   push:
     branches: [main]
-    paths: ['site/**', '.github/workflows/pages.yml']
+  schedule:
+    - cron: '23 5 * * *'
   workflow_dispatch:
 
 concurrency:
@@ -33,15 +36,31 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: docs-site/.node-version
+          cache: npm
+          cache-dependency-path: docs-site/package-lock.json
+      - name: Build the docs from uptide-dev/uptide@main
+        working-directory: docs-site
+        env:
+          ASTRO_TELEMETRY_DISABLED: '1'
+        run: |
+          npm ci
+          npm run build
+      - name: Put the landing page and the docs together
+        run: node scripts/assemble-site.mjs _site
       - name: Write the site URL into the page
         run: |
-          sed -i "s#%SITE_URL%#${SITE_URL}#g" site/index.html
-          if grep -q '%SITE_URL%' site/index.html; then
-            echo "::error::site/index.html still has a %SITE_URL% placeholder."
+          sed -i "s#%SITE_URL%#${SITE_URL}#g" _site/index.html
+          if grep -q '%SITE_URL%' _site/index.html; then
+            echo "::error::_site/index.html still has a %SITE_URL% placeholder."
             exit 1
           fi
+      - name: No broken internal links
+        run: node scripts/check-links.mjs _site
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: site
+          path: _site
       - id: deployment
         uses: actions/deploy-pages@v4

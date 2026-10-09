@@ -3,8 +3,14 @@
 The landing page of [Uptide](https://github.com/uptide-dev/uptide), published at
 https://uptide-dev.github.io.
 
-The page is `site/`: static HTML with inline CSS, self-hosted fonts and no build step. What
-each file is, and where every number on the page comes from: [site/README.md](site/README.md).
+Two parts, published together:
+
+- **The landing page** at `/` is `site/`: static HTML with inline CSS, self-hosted fonts and
+  no build step. What each file is, and where every number on the page comes from:
+  [site/README.md](site/README.md).
+- **The docs** at `/docs` are `docs-site/`, built with Astro Starlight from
+  uptide-dev/uptide's `docs/` folder, checked out at build time and never copied here:
+  [docs-site/README.md](docs-site/README.md).
 
 ## See it locally
 
@@ -12,13 +18,23 @@ each file is, and where every number on the page comes from: [site/README.md](si
 python3 -m http.server 8000 --directory site    # then open http://localhost:8000
 ```
 
+That is the landing page alone. For both, as deployed:
+
+```sh
+(cd docs-site && npm ci && npm run build)
+node scripts/assemble-site.mjs && node scripts/check-links.mjs
+python3 -m http.server 8000 --directory _site   # http://localhost:8000 and /docs/
+```
+
 `%SITE_URL%` in the page's `<head>` is expected: the deploy writes the real address there
 (canonical and social-preview URLs only; nothing visible).
 
 ## Publishing
 
-`.github/workflows/pages.yml` deploys `site/` to GitHub Pages on every push to `main` that
-changes it. Its `SITE_URL` is the one value to change if the page moves to a domain.
+`.github/workflows/pages.yml` builds the docs, puts them under `/docs` next to `site/`, checks
+every internal link and deploys to GitHub Pages: on every push to `main`, daily (to pick up
+docs changes in uptide-dev/uptide), and by hand. Its `SITE_URL` is the one value to change if
+the page moves to a domain; the docs take their canonical and `og:image` URLs from it too.
 
 One-time setup:
 
@@ -33,10 +49,14 @@ One-time setup:
 - **DCO**: every commit is signed off (`git commit -s`), as in uptide-dev/uptide.
 - **No private material**: no private planning document and no identifier from the denylist.
 - **The page's own tests** (`node --test 'test/*.test.mjs'`): every font next to its license,
-  the URLs from `SITE_URL`, nothing loaded from another origin, the deploy's trigger and
-  permissions.
+  the URLs from `SITE_URL`, nothing loaded from another origin, the deploy's triggers and
+  permissions, exact docs dependency versions, no docs committed, and the docs transforms
+  (titles, sidebar, links).
+- **The site build**: the docs build against uptide-dev/uptide@main and
+  `scripts/check-links.mjs` finds no broken internal link or anchor in landing + docs.
 
-`scripts/` (`dco.mjs`, `bots.mjs`, `public-tree.mjs`, `private-material.mjs`) and
+`scripts/assemble-site.mjs` and `scripts/check-links.mjs` belong to this repository. The rest
+of `scripts/` (`dco.mjs`, `bots.mjs`, `public-tree.mjs`, `private-material.mjs`) and
 `.github/workflows/dco.yml` are copies from uptide-dev/uptide, where they are tested. Change
 them there first, then copy them here.
 

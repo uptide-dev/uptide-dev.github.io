@@ -1,0 +1,19 @@
+{
+  "name": "uptide-docs",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "fetch-docs": "node scripts/fetch-docs.mjs",
+    "dev": "npm run fetch-docs && astro dev",
+    "build": "npm run fetch-docs && astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/markdown-remark": "7.3.2",
+    "@astrojs/starlight": "0.42.6",
+    "astro": "7.3.8"
+  }
+}
