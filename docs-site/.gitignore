@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.astro/
+# Built from uptide-dev/uptide on every build by scripts/fetch-docs.mjs; never committed.
+.cache/
+src/content/docs/
+src/generated/

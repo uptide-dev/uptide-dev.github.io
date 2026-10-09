@@ -20,11 +20,12 @@ npx serve site         # or any static file server; open http://localhost:3000
 
 ## Deploying
 
-`.github/workflows/pages.yml` publishes this directory to GitHub Pages on every push to `main`
-that changes `site/`, as it is: no build step. The canonical URL, `og:url`, `og:image` and
-`twitter:image` are written `%SITE_URL%` in `index.html`, and the workflow replaces them with
-its `SITE_URL` (now `https://uptide-dev.github.io/`) just before upload. To move the
-page to a domain, change that one value.
+`.github/workflows/pages.yml` publishes this directory to GitHub Pages as it is, at the root,
+with the docs from `docs-site/` under `/docs`: on every push to `main`, daily and by hand. The
+canonical URL, `og:url`, `og:image` and `twitter:image` are written `%SITE_URL%` in
+`index.html`, and the workflow replaces them with its `SITE_URL` (now
+`https://uptide-dev.github.io/`) in the deployed copy. To move the page to a domain, change
+that one value.
 
 ## Where the numbers come from
 

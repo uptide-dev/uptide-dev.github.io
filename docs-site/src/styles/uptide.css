@@ -1,0 +1,140 @@
+/* Uptide's tokens on Starlight: the landing page's colors, fonts, square corners, 1px rules,
+   no shadows. The fonts are the landing page's own files in site/fonts. */
+
+@font-face { font-family: 'Space Grotesk'; font-weight: 500; font-display: swap; src: url('../../../site/fonts/space-grotesk-latin-500-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Space Grotesk'; font-weight: 600; font-display: swap; src: url('../../../site/fonts/space-grotesk-latin-600-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Instrument Sans'; font-weight: 400; font-display: swap; src: url('../../../site/fonts/instrument-sans-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Instrument Sans'; font-weight: 500; font-display: swap; src: url('../../../site/fonts/instrument-sans-latin-500-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Instrument Sans'; font-weight: 600; font-display: swap; src: url('../../../site/fonts/instrument-sans-latin-600-normal.woff2') format('woff2'); }
+@font-face { font-family: 'IBM Plex Mono'; font-weight: 400; font-display: swap; src: url('../../../site/fonts/ibm-plex-mono-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family: 'IBM Plex Mono'; font-weight: 500; font-display: swap; src: url('../../../site/fonts/ibm-plex-mono-latin-500-normal.woff2') format('woff2'); }
+@font-face { font-family: 'IBM Plex Mono'; font-weight: 600; font-display: swap; src: url('../../../site/fonts/ibm-plex-mono-latin-600-normal.woff2') format('woff2'); }
+
+/* Dark (Starlight's default theme). */
+:root {
+  --uptide-bg: #131210;
+  --uptide-surface: #1B1A17;
+  --uptide-line: #36342F;
+  --uptide-text: #F0EEE7;
+  --uptide-body: #BCB9AF;
+  --uptide-dim: #918E83;
+  --uptide-accent: #7CC4FF;
+  --uptide-display: 'Space Grotesk', system-ui, sans-serif;
+
+  --sl-font: 'Instrument Sans', system-ui, -apple-system, sans-serif;
+  --sl-font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --sl-color-white: var(--uptide-text);
+  --sl-color-gray-1: var(--uptide-text);
+  --sl-color-gray-2: var(--uptide-body);
+  --sl-color-gray-3: var(--uptide-dim);
+  --sl-color-gray-4: #6E6A62;
+  --sl-color-gray-5: var(--uptide-line);
+  --sl-color-gray-6: var(--uptide-surface);
+  --sl-color-gray-7: var(--uptide-surface);
+  --sl-color-black: var(--uptide-bg);
+
+  --sl-color-accent-low: #16293B;
+  --sl-color-accent: var(--uptide-accent);
+  --sl-color-accent-high: var(--uptide-accent);
+  --sl-color-text: var(--uptide-body);
+  --sl-color-text-accent: var(--uptide-accent);
+  --sl-color-text-invert: var(--uptide-bg);
+  --sl-color-bg: var(--uptide-bg);
+  --sl-color-bg-nav: var(--uptide-bg);
+  --sl-color-bg-sidebar: var(--uptide-bg);
+  --sl-color-bg-inline-code: color-mix(in srgb, var(--uptide-accent) 10%, var(--uptide-bg));
+  --sl-color-bg-accent: var(--uptide-accent);
+  --sl-color-hairline-light: var(--uptide-line);
+  --sl-color-hairline: var(--uptide-line);
+  --sl-color-hairline-shade: var(--uptide-line);
+  --sl-color-backdrop-overlay: rgba(19, 18, 16, 0.72);
+
+  --sl-shadow-sm: none;
+  --sl-shadow-md: none;
+  --sl-shadow-lg: none;
+
+  --pagefind-ui-border-radius: 0;
+  --pagefind-ui-font: var(--sl-font);
+}
+
+/* Light. */
+:root[data-theme='light'] {
+  --uptide-bg: #F4F2EC;
+  --uptide-surface: #FAF9F5;
+  --uptide-line: #D5D2C8;
+  --uptide-text: #22211E;
+  --uptide-body: #57554F;
+  /* The landing page's dim (#76736B) is a shade short of 4.5:1 on the page for small text. */
+  --uptide-dim: #6A675F;
+  --uptide-accent: #1D63C4;
+
+  --sl-color-gray-4: #9C998F;
+  --sl-color-accent-low: #DCE6F3;
+  --sl-color-text-invert: #FFFFFF;
+  --sl-color-backdrop-overlay: rgba(34, 33, 30, 0.4);
+}
+
+/* Square corners, 1px rules, no shadows. */
+*,
+*::before,
+*::after {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Headings in Space Grotesk, as on the landing page. */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.sl-markdown-content :is(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--uptide-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--sl-color-white);
+}
+h1#_top {
+  letter-spacing: -0.035em;
+}
+
+/* Sidebar group labels in the landing page's mono label style. */
+.sidebar-content .group-label .large {
+  font: 500 0.75rem var(--sl-font-mono);
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--sl-color-gray-3);
+}
+
+/* Inline code: a tinted chip, like the landing page's. Code blocks are Expressive Code, dark. */
+.sl-markdown-content :not(pre) > code {
+  background: var(--sl-color-bg-inline-code);
+  border: 0;
+  color: var(--sl-color-white);
+  padding: 0.0625rem 0.3125rem;
+}
+
+/* Tables: rules only, no zebra fill. */
+.sl-markdown-content table {
+  border-collapse: collapse;
+}
+.sl-markdown-content :is(th, td) {
+  border: 0;
+  border-bottom: 1px solid var(--sl-color-hairline);
+  background: transparent;
+}
+.sl-markdown-content th {
+  font: 500 0.75rem var(--sl-font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--sl-color-gray-3);
+  border-top: 1px solid var(--sl-color-hairline);
+}
+
+/* Links in prose: the accent, underlined. */
+.sl-markdown-content a:not(.sl-link-card, .sl-anchor-link) {
+  color: var(--sl-color-text-accent);
+  text-underline-offset: 3px;
+}

@@ -1,5 +1,6 @@
 // The page's invariants: fonts travel with their licenses, the page takes its own address
-// from the one SITE_URL the Pages workflow writes in, and it loads nothing from elsewhere.
+// from the one SITE_URL the Pages workflow writes in, it loads nothing from elsewhere, and
+// the workflow publishes it with the docs.
 import assert from 'node:assert/strict';
 import { readdirSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
@@ -30,7 +31,7 @@ test('the canonical and social-preview URLs come from SITE_URL, written in at de
     assert.ok(page.includes(tag), tag);
   assert.doesNotMatch(page, /uptide-dev\.github\.io|raw\.githubusercontent/);
   assert.match(pages, /\n {6}SITE_URL: https:\/\/uptide-dev\.github\.io\/\n/);
-  assert.ok(pages.includes('sed -i "s#%SITE_URL%#${SITE_URL}#g" site/index.html'));
+  assert.ok(pages.includes('sed -i "s#%SITE_URL%#${SITE_URL}#g" _site/index.html'));
 });
 
 test('loads nothing from another origin: fonts, styles, scripts and images are local', () => {
@@ -39,12 +40,18 @@ test('loads nothing from another origin: fonts, styles, scripts and images are l
   assert.doesNotMatch(page, /url\((["']?)(https?:)?\/\//);
 });
 
-test('deploys site/ only, on a push to main that changes it, with Pages permissions', () => {
-  assert.match(pages, /paths: \['site\/\*\*', '\.github\/workflows\/pages\.yml'\]/);
+test('deploys landing and docs together: on a push to main, daily and by hand, with Pages permissions', () => {
+  assert.match(pages, /\non:\n {2}push:\n {4}branches: \[main\]\n {2}schedule:\n {4}- cron: '[^']+'\n {2}workflow_dispatch:\n/);
   assert.match(
     pages,
     /permissions:\n(?: {6}#.*\n)? {6}contents: read\n {6}pages: write\n {6}id-token: write/,
   );
-  assert.match(pages, /uses: actions\/upload-pages-artifact@v3\n {8}with:\n {10}path: site\n/);
+  assert.ok(pages.includes('run: node scripts/assemble-site.mjs _site'));
+  assert.ok(pages.includes('run: node scripts/check-links.mjs _site'));
+  assert.match(pages, /uses: actions\/upload-pages-artifact@v3\n {8}with:\n {10}path: _site\n/);
   assert.ok(pages.includes('uses: actions/deploy-pages@v4'));
+});
+
+test('the landing page links to the docs, in the top bar and the footer', () => {
+  assert.equal(page.match(/<a href="\/docs\/">Docs<\/a>/g)?.length, 2);
 });

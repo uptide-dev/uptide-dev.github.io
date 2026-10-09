@@ -31,3 +31,28 @@ jobs:
         run: node scripts/private-material.mjs
       - name: The page's own checks
         run: node --test 'test/*.test.mjs'
+
+  # The same build as the Pages workflow, without the deploy: the docs build against
+  # uptide-dev/uptide@main and no internal link is broken.
+  site:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: docs-site/.node-version
+          cache: npm
+          cache-dependency-path: docs-site/package-lock.json
+      - name: Build the docs from uptide-dev/uptide@main
+        working-directory: docs-site
+        env:
+          ASTRO_TELEMETRY_DISABLED: '1'
+        run: |
+          npm ci
+          npm run build
+      - name: Put the landing page and the docs together
+        run: node scripts/assemble-site.mjs _site
+      - name: No broken internal links
+        run: node scripts/check-links.mjs _site

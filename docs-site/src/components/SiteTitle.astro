@@ -1,0 +1,27 @@
+---
+// The landing page's mark and lowercase wordmark, linking to the landing page at /.
+---
+
+<a href="/" class="site-title" aria-label="uptide home">
+  <svg viewBox="0 0 32 32" fill="none" width="28" height="28" aria-hidden="true">
+    <path d="M3 23c4.5 0 6.8-2.6 8.6-6.4C13.6 12.2 16.2 8 21.2 8c3.9 0 6.8 2.6 6.8 5.8 0 2.4-1.8 4.1-4.1 4.1-1.9 0-3.1-1.2-3.1-2.8" stroke="#7CC4FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
+    <path d="M3 27.5h26" stroke="#3E7FD9" stroke-width="3" stroke-linecap="round"></path>
+  </svg>
+  <span translate="no">uptide</span>
+</a>
+
+<style>
+  .site-title {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--sl-color-white);
+    font: 600 1.375rem var(--uptide-display);
+    letter-spacing: -0.04em;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  svg {
+    flex-shrink: 0;
+  }
+</style>
