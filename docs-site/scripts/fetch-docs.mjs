@@ -3,28 +3,27 @@
 //   node scripts/fetch-docs.mjs
 //
 // The docs are never committed here: the checkout (.cache/uptide) and the generated collection
-// (src/content/docs) are both gitignored and rebuilt on every build. Environment:
-//
-//   UPTIDE_REPO      git URL to clone   (default: https://github.com/uptide-dev/uptide.git)
-//   UPTIDE_REF       branch to check out (default: main)
-//   UPTIDE_CHECKOUT  an existing local checkout to read instead of cloning (offline work)
+// (src/content/docs) are both gitignored and rebuilt on every build. What is checked out is
+// decided by scripts/release.mjs: the tag of the latest uptide release on npm, or, for previews
+// that are never deployed, UPTIDE_REF or UPTIDE_CHECKOUT. The resolved version, ref and commit
+// are printed and recorded in src/generated/source.json, which the site's meta tags and the
+// landing page read.
 //
 // For each Markdown page under docs/ (docs/screenshots/ is image evidence, not pages):
 // - README.md becomes the index page;
 // - the page's front matter title and description are kept; a page without them takes its
 //   title from its first `# ` heading and its description from its first paragraph;
 // - the first `# ` heading is dropped, since Starlight renders the title as the page's h1;
-// - editUrl points at the file on GitHub.
+// - editUrl points at the file on main on GitHub (a release tag cannot be edited).
 // Links are rewritten when the page is rendered, by src/remark-uptide-links.mjs, from the map
 // this script writes to src/generated/source.json.
 import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { deployable, describe, resolveSource } from './release.mjs';
 
 const site = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const repoUrl = process.env.UPTIDE_REPO || 'https://github.com/uptide-dev/uptide.git';
-const ref = process.env.UPTIDE_REF || 'main';
 const github = 'https://github.com/uptide-dev/uptide';
 
 const git = (args, cwd) =>
@@ -36,12 +35,15 @@ const git = (args, cwd) =>
     stdio: ['ignore', 'pipe', 'inherit'],
   }).trim();
 
-function checkout() {
-  if (process.env.UPTIDE_CHECKOUT) return resolve(process.env.UPTIDE_CHECKOUT);
+/** A shallow checkout of exactly `source.fetchRef` (a tag, branch or commit), nothing else. */
+function checkout(source) {
+  if (source.kind === 'local') return resolve(source.path);
   const dir = join(site, '.cache', 'uptide');
   rmSync(dir, { recursive: true, force: true });
-  mkdirSync(dirname(dir), { recursive: true });
-  git(['-c', 'credential.helper=', 'clone', '--quiet', '--depth', '1', '--branch', ref, repoUrl, dir]);
+  mkdirSync(dir, { recursive: true });
+  git(['init', '--quiet'], dir);
+  git(['-c', 'credential.helper=', 'fetch', '--quiet', '--depth', '1', source.repoUrl, source.fetchRef], dir);
+  git(['checkout', '--quiet', '--detach', 'FETCH_HEAD'], dir);
   return dir;
 }
 
@@ -125,9 +127,17 @@ const hasKey = (data, key) => new RegExp(`^${key}\\s*:`, 'm').test(data);
 export const slugOf = (docPath) =>
   docPath.replace(/(^|\/)README\.md$/i, '$1').replace(/\.md$/i, '').replace(/\/$/, '');
 
-function main() {
-  const repo = checkout();
-  const sha = git(['rev-parse', 'HEAD'], repo);
+async function main() {
+  const source = await resolveSource();
+  const repo = checkout(source);
+  source.sha = git(['rev-parse', 'HEAD'], repo);
+  const version = JSON.parse(readFileSync(join(repo, 'packages/cli/package.json'), 'utf8')).version;
+  if (source.kind === 'release' && version !== source.version)
+    throw new Error(`tag ${source.ref} has packages/cli/package.json version ${version}, but npm's latest is ${source.version}`);
+  source.version = version;
+  // Links into the repository point at what was built; a local checkout has no ref to link to.
+  const linkRef = source.kind === 'local' ? 'main' : source.ref;
+  console.log(`uptide source: ${describe(source)}`);
   const docsDir = join(repo, 'docs');
   if (!existsSync(join(docsDir, 'README.md'))) throw new Error(`${docsDir}/README.md not found`);
 
@@ -150,7 +160,9 @@ function main() {
     }
     if (!hasKey(data, 'description') && read.description)
       extra.push(`description: ${JSON.stringify(read.description)}`);
-    if (!hasKey(data, 'editUrl')) extra.push(`editUrl: ${JSON.stringify(`${github}/edit/${ref}/docs/${file}`)}`);
+    // A tag cannot be edited: "Edit page" opens the file on main.
+    if (!hasKey(data, 'editUrl'))
+      extra.push(`editUrl: ${JSON.stringify(`${github}/edit/main/docs/${file}`)}`);
     const front = [data, ...extra].filter(Boolean).join('\n');
     const target = join(out, slug === '' ? 'index.md' : `${slug}.md`);
     mkdirSync(dirname(target), { recursive: true });
@@ -162,9 +174,27 @@ function main() {
   mkdirSync(generated, { recursive: true });
   writeFileSync(
     join(generated, 'source.json'),
-    `${JSON.stringify({ repo: github, ref, sha, checkout: relative(site, repo) || '.', pages }, null, 2)}\n`,
+    `${JSON.stringify(
+      {
+        kind: source.kind,
+        deployable: deployable(source),
+        version: source.version,
+        ref: source.ref,
+        sha: source.sha,
+        repo: github,
+        linkRef,
+        checkout: relative(site, repo) || '.',
+        pages,
+      },
+      null,
+      2,
+    )}\n`,
   );
-  console.log(`docs: ${files.length} pages from ${github}@${sha.slice(0, 7)} (${ref})`);
+  console.log(`docs: ${files.length} pages from ${github}@${source.sha.slice(0, 7)} (${source.ref})`);
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) main();
+if (process.argv[1] === fileURLToPath(import.meta.url))
+  main().catch((error) => {
+    console.error(`fetch-docs: ${error.message}`);
+    process.exit(1);
+  });

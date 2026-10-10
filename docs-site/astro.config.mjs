@@ -1,17 +1,22 @@
 // The docs site, served at /docs next to the landing page (site/). Content comes from
 // uptide-dev/uptide's docs/ folder at build time: see scripts/fetch-docs.mjs.
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import { unified } from '@astrojs/markdown-remark';
 import remarkUptideLinks from './src/remark-uptide-links.mjs';
 import { sidebar } from './src/sidebar.mjs';
+import { metaFields } from './scripts/release.mjs';
 
 // The site's address, as in .github/workflows/pages.yml; canonical and og:image URLs use it.
 const SITE_URL = process.env.SITE_URL || 'https://uptide-dev.github.io/';
 const base = '/docs';
 const siteDir = fileURLToPath(new URL('.', import.meta.url));
 const ogImage = new URL('og.png', SITE_URL).href;
+// The uptide release (or preview ref) the docs were built from, written by scripts/fetch-docs.mjs.
+const source = JSON.parse(readFileSync(new URL('./src/generated/source.json', import.meta.url), 'utf8'));
+const releaseMeta = metaFields(source).map((attrs) => ({ tag: 'meta', attrs }));
 
 export default defineConfig({
   site: SITE_URL,
@@ -38,6 +43,7 @@ export default defineConfig({
         { tag: 'meta', attrs: { property: 'og:image:height', content: '640' } },
         { tag: 'meta', attrs: { name: 'twitter:card', content: 'summary_large_image' } },
         { tag: 'meta', attrs: { name: 'twitter:image', content: ogImage } },
+        ...releaseMeta,
       ],
       // Code blocks are a dark terminal in both themes, like the landing page's output blocks.
       expressiveCode: {

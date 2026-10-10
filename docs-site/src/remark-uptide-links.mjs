@@ -31,9 +31,9 @@ export default function remarkUptideLinks({ base, source }) {
     const slug = source.pages[target];
     if (slug !== undefined) return `${root}/${slug ? `${slug}/` : ''}${suffix}`;
     const onDisk = resolve(checkout, target);
-    if (kind === 'image') return `https://raw.githubusercontent.com/uptide-dev/uptide/${source.ref}/${target}`;
+    if (kind === 'image') return `https://raw.githubusercontent.com/uptide-dev/uptide/${source.linkRef ?? source.ref}/${target}`;
     const isDir = existsSync(onDisk) && statSync(onDisk).isDirectory();
-    return `${source.repo}/${isDir ? 'tree' : 'blob'}/${source.ref}/${target.replace(/\/$/, '')}${suffix}`;
+    return `${source.repo}/${isDir ? 'tree' : 'blob'}/${source.linkRef ?? source.ref}/${target.replace(/\/$/, '')}${suffix}`;
   };
 
   return (tree, file) => {

@@ -32,7 +32,8 @@ that one value.
 
 Every number on the page traces to a public run or a public file in
 [uptide-dev/uptide](https://github.com/uptide-dev/uptide), and the deploy checks it against the
-checkout the docs build makes (`scripts/landing-data.mjs`, run by `scripts/assemble-site.mjs`):
+checkout the docs build makes, which is the tag of the latest uptide release on npm
+(`scripts/landing-data.mjs`, run by `scripts/assemble-site.mjs`):
 
 - **Version and packs** are not written in `index.html`. Elements marked `data-uptide="…"`
   hold a fallback, and the deploy fills them: the version from `packages/cli/package.json`,
