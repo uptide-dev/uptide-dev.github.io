@@ -53,8 +53,8 @@ square corners, 1px rules and no shadows. Code blocks are Expressive Code with o
 on `#131210` in both themes. `src/components/SiteTitle.astro` is the landing page's mark and
 wordmark, linking to `/`. `public/favicon.svg` is a link to `site/favicon.svg`.
 
-In light mode the dim text color is `#6A675F` rather than the landing page's `#76736B`, which
-falls just short of 4.5:1 for small text on the page background.
+In light mode the dim text color is `#6A675F`, the same as the landing page: 4.5:1 or better for
+small text on the page background.
 
 ## Versions
 

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Not found · Uptide</title>
+<meta name="robots" content="noindex">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#F4F2EC" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131210" media="(prefers-color-scheme: dark)">
+<!-- GitHub Pages serves this file for every missing path, so every URL here is absolute. -->
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/fonts/space-grotesk-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:'Space Grotesk';font-weight:600;font-display:swap;src:url(/fonts/space-grotesk-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Instrument Sans';font-weight:400;font-display:swap;src:url(/fonts/instrument-sans-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Mono';font-weight:600;font-display:swap;src:url(/fonts/ibm-plex-mono-latin-600-normal.woff2) format('woff2')}
+
+/* The landing page's tokens (site/index.html). */
+:root{color-scheme:light;--bg:#F4F2EC;--surface:#FAF9F5;--line:#D5D2C8;--text:#22211E;--body:#57554F;--dim:#6A675F;--accent:#1D63C4;
+  --logo-wave:#7CC4FF;--logo-line:#3E7FD9;
+  --display:'Space Grotesk',system-ui,sans-serif;--sans:'Instrument Sans',system-ui,-apple-system,sans-serif;--mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;--gx:40px}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){color-scheme:dark;--bg:#131210;--surface:#1B1A17;--line:#36342F;--text:#F0EEE7;--body:#BCB9AF;--dim:#918E83;--accent:#7CC4FF}}
+:root[data-theme=dark]{color-scheme:dark;--bg:#131210;--surface:#1B1A17;--line:#36342F;--text:#F0EEE7;--body:#BCB9AF;--dim:#918E83;--accent:#7CC4FF}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 var(--sans);-webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.dots{background-image:radial-gradient(color-mix(in srgb,var(--dim) 24%,transparent) .7px,transparent .7px);background-size:18px 18px}
+.bar{border-bottom:1px solid var(--line)}
+.bar-inner,main{max-width:1200px;width:100%;margin:0 auto;border-left:1px solid var(--line);border-right:1px solid var(--line)}
+.bar-inner{height:64px;padding:0 var(--gx);display:flex;align-items:center}
+.brand{display:flex;align-items:center;gap:9px;color:var(--text);text-decoration:none;font:600 24px var(--display);letter-spacing:-.04em}
+.brand svg{width:30px;height:30px;flex-shrink:0}
+.brand .wave{stroke:var(--logo-wave)} .brand .base{stroke:var(--logo-line)}
+main{flex:1;padding:120px var(--gx);display:flex;flex-direction:column;align-items:flex-start;gap:32px}
+h1{margin:0;font:600 clamp(40px,6vw,72px)/1.05 var(--display);letter-spacing:-.045em;color:var(--text);text-wrap:balance}
+.actions{display:flex;flex-wrap:wrap;gap:10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:13px 20px;font:600 12px var(--mono);letter-spacing:.12em;text-transform:uppercase;text-decoration:none;border:1px solid var(--line);color:var(--text);background:var(--surface);white-space:nowrap}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.solid{background:var(--text);color:var(--bg);border-color:var(--text)}
+.btn.solid:hover{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+@media (max-width:900px){:root{--gx:20px}.bar-inner,main{border-left:0;border-right:0}main{padding-top:72px}}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="bar-inner">
+    <a class="brand" href="/" aria-label="Uptide home">
+      <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M3 23c4.5 0 6.8-2.6 8.6-6.4C13.6 12.2 16.2 8 21.2 8c3.9 0 6.8 2.6 6.8 5.8 0 2.4-1.8 4.1-4.1 4.1-1.9 0-3.1-1.2-3.1-2.8" class="wave" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 27.5h26" class="base" stroke-width="3" stroke-linecap="round"/></svg>
+      uptide
+    </a>
+  </div>
+</header>
+
+<main class="dots">
+  <h1>This page is not here.</h1>
+  <nav class="actions" aria-label="Where to go">
+    <a class="btn solid" href="/">Home</a>
+    <a class="btn" href="/docs/">Docs</a>
+  </nav>
+</main>
+
+</body>
+</html>

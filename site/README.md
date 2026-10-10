@@ -13,6 +13,7 @@ npx serve site         # or any static file server; open http://localhost:3000
 | File | What it is |
 | --- | --- |
 | `index.html` | The page. Design tokens are the same as the list/check HTML report ([`packages/cli/src/html/assets.ts`](https://github.com/uptide-dev/uptide/blob/main/packages/cli/src/html/assets.ts) in uptide-dev/uptide); light and dark follow the system. |
+| `404.html` | The page GitHub Pages serves for every missing path. Every URL in it is absolute. |
 | `favicon.svg` | The logo mark in its two blues (`#7CC4FF` wave, `#3E7FD9` line), the same in both themes. |
 | `og.png` | Social preview, 1280×640. Used for `og:image` and `twitter:image`, and meant for the repository's social preview setting. |
 | `og-image.html` | Source of `og.png`. Render it at 1280×640 with a headless browser and save a PNG screenshot. |
@@ -29,15 +30,25 @@ that one value.
 
 ## Where the numbers come from
 
-Every number on the page is printed output, never edited:
+Every number on the page traces to a public run or a public file in
+[uptide-dev/uptide](https://github.com/uptide-dev/uptide), and the deploy checks it against the
+checkout the docs build makes (`scripts/landing-data.mjs`, run by `scripts/assemble-site.mjs`):
 
-- `list` on [supabase/supabase](https://github.com/supabase/supabase) at commit
-  `9d1661dec1548ec5bf3ffb4f551376a7650c213e`, run with uptide 0.4.0 from npm (`npx uptide@latest list`) on 2026-10-06 from the
-  repository root (`npx uptide list`). Rows are trimmed. Latest versions and advisories come
-  from the registry at run time, so a rerun prints different numbers: when you refresh the
-  page, rerun and replace the block and the four tiles together, and update the footnote.
-- `check` and `fix` on [`fixtures/repos/storefront`](https://github.com/uptide-dev/uptide/tree/main/fixtures/repos/storefront):
-  the same blocks as the uptide README's "Before and after". If those numbers change, change
-  them in both repositories.
-- Timings in the hero note: `list` on the storefront fixture (about a second) and on the
-  supabase commit above (20 seconds).
+- **Version and packs** are not written in `index.html`. Elements marked `data-uptide="…"`
+  hold a fallback, and the deploy fills them: the version from `packages/cli/package.json`,
+  and the packs (count, list, and the table with precision, recall and ground-truth
+  repositories) from each pack's `verification.json` and `ground-truth.json`. The version range
+  is read from the README's generated packs table, and every other column of that table must
+  equal what the JSON gives, so the page and the README cannot disagree: if they would, the
+  deploy fails.
+- **Terminal output** is the storefront fixture's `check` and `fix` runs as the uptide README
+  and docs print them. Each `<pre>` names its source (`data-source="docs/commands/check.md"`)
+  and must be a run of consecutive lines of a code block there, so a block that drifts from
+  the published run fails the deploy. When uptide's docs change a run, copy the new lines in.
+- **The privacy block** is the statement `uptide --help` prints, checked word for word
+  against `docs/privacy.md` (`data-match="text"`, as uptide's own test checks it).
+- **Everything else** (Node 20, the default models, the `$1` cost cap, exit codes) is from
+  uptide's `package.json` and docs.
+
+Opening `index.html` straight from `site/` shows the fallbacks; see the repository README for
+building it as deployed.

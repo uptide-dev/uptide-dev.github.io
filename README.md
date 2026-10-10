@@ -52,10 +52,13 @@ One-time setup:
   the URLs from `SITE_URL`, nothing loaded from another origin, the deploy's triggers and
   permissions, exact docs dependency versions, no docs committed, and the docs transforms
   (titles, sidebar, links).
-- **The site build**: the docs build against uptide-dev/uptide@main and
-  `scripts/check-links.mjs` finds no broken internal link or anchor in landing + docs.
+- **The site build**: the docs build against uptide-dev/uptide@main, the landing page's
+  version and packs are rendered from that checkout and its terminal blocks checked against
+  their public sources (`scripts/landing-data.mjs`), and `scripts/check-links.mjs` finds no
+  broken internal link or anchor in landing + docs.
 
-`scripts/assemble-site.mjs` and `scripts/check-links.mjs` belong to this repository. The rest
+`scripts/assemble-site.mjs`, `scripts/landing-data.mjs` and `scripts/check-links.mjs` belong to
+this repository. The rest
 of `scripts/` (`dco.mjs`, `bots.mjs`, `public-tree.mjs`, `private-material.mjs`) and
 `.github/workflows/dco.yml` are copies from uptide-dev/uptide, where they are tested. Change
 them there first, then copy them here.
