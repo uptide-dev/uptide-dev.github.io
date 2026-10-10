@@ -34,7 +34,7 @@ export function sidebar(siteDir) {
     const slugs = Object.values(source.pages).filter((s) => s.startsWith(`${folder.slice(5)}/`));
     if (folder.startsWith('docs/') && slugs.length)
       return { label, collapsed: true, items: [{ autogenerate: { directory: folder.slice(5) } }] };
-    return { label, link: `${source.repo}/blob/${source.ref}/${path}`, attrs: { rel: 'external' } };
+    return { label, link: `${source.repo}/blob/${source.linkRef ?? source.ref}/${path}`, attrs: { rel: 'external' } };
   };
   return [
     { label: 'Overview', slug: '' },

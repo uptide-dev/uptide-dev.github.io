@@ -2,8 +2,23 @@
 
 The Uptide documentation at `/docs`, built with [Starlight](https://starlight.astro.build)
 from [uptide-dev/uptide](https://github.com/uptide-dev/uptide)'s `docs/` folder. The docs
-are never copied into this repository: every build checks out `main` of uptide-dev/uptide
+are never copied into this repository: every build checks out the latest uptide release
 (anonymous HTTPS) and generates the content collection from it.
+
+## Which release
+
+`scripts/release.mjs` asks npm for the `latest` dist-tag of `uptide` and checks out tag
+`v<version>` of uptide-dev/uptide. If that tag does not exist the build fails, naming the
+version and the tag; it never falls back to `main`. The build log prints what it resolved:
+
+```
+uptide source: uptide 0.6.1: npm latest, tag v0.6.1 (7df8235)
+```
+
+Every built page, landing and 404 included, carries it in its head:
+`<meta name="uptide-version">`, `<meta name="uptide-ref">` and `<meta name="uptide-commit">`.
+Links into the repository point at the tag; "Edit page" opens the file on `main`, since a tag
+cannot be edited.
 
 ```sh
 npm ci
@@ -19,8 +34,10 @@ node scripts/check-links.mjs                      # no broken internal link or #
 python3 -m http.server 8000 --directory _site     # http://localhost:8000/docs/
 ```
 
-`UPTIDE_CHECKOUT=/path/to/uptide` builds from a local checkout instead of cloning (offline
-work, or previewing docs changes before they land); `UPTIDE_REF` picks another branch.
+For previews, `UPTIDE_REF=<branch, tag or commit>` builds from another ref, and
+`UPTIDE_CHECKOUT=/path/to/uptide` from a local checkout (offline work, or docs changes before
+they land). A site built either way is marked not deployable, and the Pages workflow never
+deploys it. `UPTIDE_NPM_REGISTRY` points the release lookup at another registry.
 
 ## How the content is made
 

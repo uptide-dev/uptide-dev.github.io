@@ -12,6 +12,10 @@ Two parts, published together:
   uptide-dev/uptide's `docs/` folder, checked out at build time and never copied here:
   [docs-site/README.md](docs-site/README.md).
 
+Both reflect the latest published release of uptide: the `latest` dist-tag on npm, checked out
+as tag `v<version>`. Every built page names it in `<meta name="uptide-version">` and
+`<meta name="uptide-ref">`.
+
 ## See it locally
 
 ```sh
@@ -32,8 +36,14 @@ python3 -m http.server 8000 --directory _site   # http://localhost:8000 and /doc
 ## Publishing
 
 `.github/workflows/pages.yml` builds the docs, puts them under `/docs` next to `site/`, checks
-every internal link and deploys to GitHub Pages: on every push to `main`, daily (to pick up
-docs changes in uptide-dev/uptide), and by hand. Its `SITE_URL` is the one value to change if
+every internal link and deploys to GitHub Pages: on every push to `main`, daily (so a new
+uptide release reaches the site within a day), and by hand. A missing release tag fails the
+build rather than falling back to `main`.
+
+**Previews:** Actions → Pages → Run workflow, with `ref` set to an uptide-dev/uptide branch,
+tag or commit, builds the site from that ref and uploads it as the run's `github-pages`
+artifact. It is never deployed: the deploy job runs only when the build reports it was built
+from the release tag and no `ref` was given. Its `SITE_URL` is the one value to change if
 the page moves to a domain; the docs take their canonical and `og:image` URLs from it too.
 
 One-time setup:
@@ -52,7 +62,7 @@ One-time setup:
   the URLs from `SITE_URL`, nothing loaded from another origin, the deploy's triggers and
   permissions, exact docs dependency versions, no docs committed, and the docs transforms
   (titles, sidebar, links).
-- **The site build**: the docs build against uptide-dev/uptide@main, the landing page's
+- **The site build**: the docs build against the latest uptide release, the landing page's
   version and packs are rendered from that checkout and its terminal blocks checked against
   their public sources (`scripts/landing-data.mjs`), and `scripts/check-links.mjs` finds no
   broken internal link or anchor in landing + docs.

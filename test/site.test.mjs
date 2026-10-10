@@ -40,16 +40,12 @@ test('loads nothing from another origin: fonts, styles, scripts and images are l
   assert.doesNotMatch(page, /url\((["']?)(https?:)?\/\//);
 });
 
-test('deploys landing and docs together: on a push to main, daily and by hand, with Pages permissions', () => {
-  assert.match(pages, /\non:\n {2}push:\n {4}branches: \[main\]\n {2}schedule:\n {4}- cron: '[^']+'\n {2}workflow_dispatch:\n/);
-  assert.match(
-    pages,
-    /permissions:\n(?: {6}#.*\n)? {6}contents: read\n {6}pages: write\n {6}id-token: write/,
-  );
+test('builds landing and docs together and deploys them to Pages', () => {
   assert.ok(pages.includes('run: node scripts/assemble-site.mjs _site'));
   assert.ok(pages.includes('run: node scripts/check-links.mjs _site'));
   assert.match(pages, /uses: actions\/upload-pages-artifact@v3\n {8}with:\n {10}path: _site\n/);
   assert.ok(pages.includes('uses: actions/deploy-pages@v4'));
+  // Triggers, permissions and the deploy guard: test/release.test.mjs.
 });
 
 test('the landing page links to the docs, in the top bar and the footer', () => {

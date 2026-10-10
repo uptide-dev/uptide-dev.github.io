@@ -1,33 +1,42 @@
 name: Pages
 
 # Publishes the landing page (site/, as it is) at / and the docs (docs-site/, built with
-# Starlight from uptide-dev/uptide's docs/ folder) at /docs. The docs live in the other
-# repository, so the site is rebuilt on every push to main here, once a day to pick up docs
-# changes there, and by hand. See README.md.
+# Starlight) at /docs, both from the latest uptide release: the `latest` dist-tag of `uptide`
+# on npm, checked out as tag v<version> of uptide-dev/uptide (docs-site/scripts/release.mjs).
+# A missing tag fails the build; it never falls back to main. The site is rebuilt on every push
+# to main here, once a day so a new release reaches it within a day, and by hand. See README.md.
+#
+# A manual run with `ref` set builds a preview from that ref and uploads it as an artifact. It
+# is never deployed: the deploy job runs only when the build reports it was built from the
+# release tag, and only when no `ref` was given.
 on:
   push:
     branches: [main]
   schedule:
     - cron: '23 5 * * *'
   workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Preview only: build from this uptide-dev/uptide ref (branch, tag or commit) instead of the latest release. Never deployed.'
+        required: false
+        default: ''
+        type: string
 
 concurrency:
-  group: pages
+  group: pages-${{ inputs.ref || 'release' }}
   cancel-in-progress: false
 
 permissions: {}
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     permissions:
-      # checkout reads the repository; deploy-pages publishes with the OIDC identity.
       contents: read
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+    outputs:
+      release: ${{ steps.assemble.outputs.release }}
+      version: ${{ steps.assemble.outputs.version }}
+      ref: ${{ steps.assemble.outputs.ref }}
     env:
       # The page's own address, for its canonical and social-preview URLs. The one value to
       # change when the page moves to a domain.
@@ -41,14 +50,17 @@ jobs:
           node-version-file: docs-site/.node-version
           cache: npm
           cache-dependency-path: docs-site/package-lock.json
-      - name: Build the docs from uptide-dev/uptide@main
+      - name: Build the docs from the latest uptide release (or the preview ref)
         working-directory: docs-site
         env:
           ASTRO_TELEMETRY_DISABLED: '1'
+          # Empty on push and schedule; set only by a manual run's `ref` input.
+          UPTIDE_REF: ${{ inputs.ref }}
         run: |
           npm ci
           npm run build
       - name: Put the landing page and the docs together
+        id: assemble
         run: node scripts/assemble-site.mjs _site
       - name: Write the site URL into the page
         run: |
@@ -59,8 +71,34 @@ jobs:
           fi
       - name: No broken internal links
         run: node scripts/check-links.mjs _site
+      - name: Say which uptide release the site reflects
+        env:
+          VERSION: ${{ steps.assemble.outputs.version }}
+          REF: ${{ steps.assemble.outputs.ref }}
+          RELEASE: ${{ steps.assemble.outputs.release }}
+        run: |
+          echo "### uptide ${VERSION} (${REF})" >> "$GITHUB_STEP_SUMMARY"
+          if [ "$RELEASE" = true ]; then
+            echo "Built from the latest release on npm; deployed by the next job." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "Preview built from ${REF}: uploaded as an artifact, not deployed." >> "$GITHUB_STEP_SUMMARY"
+          fi
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
+
+  deploy:
+    needs: build
+    # Only a build from the npm release's tag, and never a manual run with a `ref`.
+    if: needs.build.outputs.release == 'true' && (github.event_name != 'workflow_dispatch' || inputs.ref == '')
+    runs-on: ubuntu-latest
+    permissions:
+      # deploy-pages publishes the uploaded artifact with the OIDC identity.
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - id: deployment
         uses: actions/deploy-pages@v4
