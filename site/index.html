@@ -39,7 +39,7 @@
 @font-face{font-family:'IBM Plex Mono';font-weight:600;font-display:swap;src:url(fonts/ibm-plex-mono-latin-600-normal.woff2) format('woff2')}
 
 /* Design tokens: the same values as the list/check HTML report (packages/cli/src/html/assets.ts). */
-:root{color-scheme:light;--bg:#F4F2EC;--surface:#FAF9F5;--line:#D5D2C8;--text:#22211E;--body:#57554F;--dim:#76736B;--accent:#1D63C4;--ok:#28724A;--warn:#996014;--bad:#B63C37;
+:root{color-scheme:light;--bg:#F4F2EC;--surface:#FAF9F5;--line:#D5D2C8;--text:#22211E;--body:#57554F;--dim:#6A675F;--accent:#1D63C4;--ok:#28724A;--warn:#996014;--bad:#B63C37;
   --display:'Space Grotesk',system-ui,sans-serif;--sans:'Instrument Sans',system-ui,-apple-system,sans-serif;--mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;--gx:40px;
   /* The logo's two blues, the same in both themes. */
   --logo-wave:#7CC4FF;--logo-line:#3E7FD9;
@@ -139,13 +139,6 @@ ul.check li::before{content:'✓';color:var(--ok)}
 .output figure{margin:0;display:flex;flex-direction:column;gap:14px;min-width:0}
 .output figcaption{font-size:15.5px;line-height:1.65;color:var(--body);max-width:760px}
 .output figcaption b{color:var(--text);font-weight:600}
-.fn{font:12px/1.7 var(--mono);color:var(--dim)}
-.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--line);border-bottom:0;background:var(--bg)}
-.stat{padding:20px 24px;border-right:1px solid var(--line)}
-.stat:last-child{border-right:0}
-.stat strong{display:block;font:500 40px/1.1 var(--display);letter-spacing:-.05em;margin-bottom:6px;font-variant-numeric:tabular-nums}
-.stat.warn strong{color:var(--warn)}
-.stat .label{font-size:10.5px}
 
 /* risk table and privacy block */
 .risk{border-top:1px solid var(--line)}
@@ -153,6 +146,13 @@ ul.check li::before{content:'✓';color:var(--ok)}
 .risk b{font:600 11.5px var(--mono);letter-spacing:.12em;text-transform:uppercase;padding-top:3px}
 .risk .lo{color:var(--ok)} .risk .me{color:var(--warn)} .risk .hi{color:var(--bad)}
 .quote{margin:0 var(--gx) 32px}
+.packs{margin:0 var(--gx);padding:8px 0 20px;display:flex;flex-direction:column;gap:12px;max-width:900px}
+.packs p{font-size:15.5px;line-height:1.65;color:var(--body)}
+.scroll{margin:0 var(--gx) 80px;overflow-x:auto}
+.scroll table.leaves{width:100%;margin:0}
+table.leaves.wide td{white-space:nowrap}
+table.leaves.wide td:nth-child(3),table.leaves.wide td:nth-child(4),table.leaves.wide th:nth-child(3),table.leaves.wide th:nth-child(4){text-align:right;font-variant-numeric:tabular-nums}
+table.leaves.wide td:nth-child(5){white-space:normal;min-width:220px}
 .callout{margin:0 var(--gx) 72px;padding-top:18px;border-top:1px solid var(--text);font-size:15.5px;line-height:1.65;color:var(--body);max-width:900px}
 .callout b{color:var(--text)}
 table.leaves{width:calc(100% - 2 * var(--gx));margin:0 var(--gx) 80px;border-collapse:collapse;font-size:15px}
@@ -178,14 +178,12 @@ footer .brand svg{width:22px;height:22px}
   .head{padding:64px var(--gx) 28px}
   .row{grid-template-columns:1fr;gap:8px}
   .cols{grid-template-columns:1fr}
-  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .stat:nth-child(2){border-right:0}
-  .stat:nth-child(-n+2){border-bottom:1px solid var(--line)}
-  table.leaves,table.leaves tbody,table.leaves tr,table.leaves td{display:block;width:auto}
-  table.leaves{width:auto}
-  table.leaves thead{display:none}
-  table.leaves tr{border-top:1px solid var(--line);padding:10px 0}
-  table.leaves td,table.leaves td:first-child{border:0;padding:4px 0;white-space:normal}
+  table.leaves:not(.wide),table.leaves:not(.wide) tbody,table.leaves:not(.wide) tr,table.leaves:not(.wide) td{display:block;width:auto}
+  table.leaves:not(.wide){width:auto}
+  table.leaves:not(.wide) thead{display:none}
+  table.leaves:not(.wide) tr{border-top:1px solid var(--line);padding:10px 0}
+  table.leaves:not(.wide) td,table.leaves:not(.wide) td:first-child{border:0;padding:4px 0;white-space:normal}
+  .scroll{margin-bottom:64px}
 }
 @media (max-width:560px){
   .bar .btn span{display:none}
@@ -196,8 +194,6 @@ footer .brand svg{width:22px;height:22px}
   .actions .btn{flex:1}
   .out pre{font-size:11.5px;padding:14px}
   .diff pre{padding:12px 0}.diff .l{padding:0 14px}
-  .stat{padding:16px}
-  .stat strong{font-size:30px}
 }
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 @media print{.bar{position:static}.copy{display:none}}
@@ -219,7 +215,7 @@ footer .brand svg{width:22px;height:22px}
       <a href="#contribute">Contribute</a>
       <a href="/docs/">Docs</a>
     </nav>
-    <a class="btn" href="https://github.com/uptide-dev/uptide">
+    <a class="btn" href="https://github.com/uptide-dev/uptide" aria-label="Star on GitHub">
       <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A11.5 11.5 0 0 0 23.5 12C23.5 5.7 18.3.5 12 .5z"/></svg>
       <span>Star on GitHub</span>
     </a>
@@ -231,30 +227,24 @@ footer .brand svg{width:22px;height:22px}
 <!-- 1. Hero -->
 <section class="hero dots">
   <div class="stack">
-    <div class="label">Open source · Apache-2.0</div>
+    <div class="label">Open source · Apache-2.0 · <span data-uptide="version">latest</span> on npm</div>
     <h1>Migrations you can merge.</h1>
     <p class="lead">Uptide is an open-source CLI that shows which dependency upgrades matter in your repo, what each one breaks in your code, and opens a verified migration branch or PR. It runs locally on your repo. Nothing to sign up for.</p>
     <div class="command"><code>npx uptide list --html --open</code><button class="copy" type="button" data-copy="npx uptide list --html --open" aria-label="Copy npx uptide list --html --open"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="7" y="7" width="10" height="10" stroke="currentColor" stroke-width="1.5"/><path d="M13 7V3H3v10h4" stroke="currentColor" stroke-width="1.5"/></svg><span>Copy</span></button></div>
-    <p class="note">No API key. No account. About a second on a small repo, 20 seconds on the supabase monorepo. Node 20 or newer.</p>
+    <p class="note">No API key. No account. Node 20 or newer.</p>
     <div class="actions">
       <a class="btn solid" href="https://github.com/uptide-dev/uptide">Star on GitHub</a>
       <a class="btn" href="https://github.com/uptide-dev/uptide/blob/main/CONTRIBUTING.md#how-packs-work">Write a pack</a>
     </div>
   </div>
-  <figure class="out" aria-label="Beginning of npx uptide list on supabase/supabase">
-    <div class="out-head"><span>supabase/supabase @ 9d1661d</span><span>uptide list</span></div>
-<pre><span class="a">$</span> npx uptide list
-<strong>uptide list · supabase · pnpm · 20s</strong>
+  <figure class="out" aria-label="Beginning of npx uptide check zod stripe on fixtures/repos/storefront">
+    <div class="out-head"><span>fixtures/repos/storefront</span><span>uptide check</span></div>
+<pre data-source="docs/commands/check.md"><span class="a">$</span> npx uptide check zod stripe
+<strong>uptide check · storefront · pnpm · 8.5s</strong>
 
-273 outdated   116 major   100 minor   57 patch   15 groups   53 tooling
-
-<strong>PRIORITIES</strong>  <span class="d">most urgent first · advisories checked for 377 packages</span>
-  <strong>Urgent</strong>  12 · advisories, deprecations
-    @modelcontextprotocol/*   <span class="b">1 advisory (1 high), fixed in 1.31.0 (minor, same major)</span>
-    simple-git                <span class="b">dev · 3 advisories (1 critical), needs 4.0.1 (major)</span>
-    smol-toml                 <span class="b">1 advisory (1 moderate), fixed in 1.9.0 (minor, same major)</span>
-    <span class="d">…</span></pre>
-    <div class="out-head" style="border-top:1px solid var(--term-line);border-bottom:0"><a href="#output">Full output below ↓</a><span>first 3 of 12 urgent rows</span></div>
+zod                     3.25.76 → 4.6.5    major · latest on npm      <span class="g">verified</span>   <span class="b">✗ 28 breaking in 7 files</span>   24 auto-fixable · 4 need the agent (LLM)
+stripe (packages/api)   14.25.0 → 23.0.0   9 majors behind · latest on npm   <span class="g">verified</span>   <span class="b">✗ 4 breaking in 3 files</span>    1 auto-fixable · 3 need the agent (LLM)</pre>
+    <div class="out-head" style="border-top:1px solid var(--term-line);border-bottom:0"><a href="#output">Full output below ↓</a><span>the first lines of the run</span></div>
   </figure>
 </section>
 
@@ -295,7 +285,7 @@ footer .brand svg{width:22px;height:22px}
     <div class="row"><div class="k">fix &lt;pkg&gt;</div><div class="v">
       <p>Migrates on a new branch in an isolated clone of your local HEAD, in two passes:</p>
       <ul class="plain">
-        <li><span><b>Deterministic rules first.</b> The dependency's pack (zod, stripe) rewrites every site it covers, the same way on every run. No LLM, no key.</span></li>
+        <li><span><b>Deterministic rules first.</b> When the dependency has a <a href="#packs">verified pack</a>, it rewrites every site it covers, the same way on every run. No LLM, no key.</span></li>
         <li><span><b>Then AI, only for what rules can't do.</b> It needs your API key in the environment: <code>ANTHROPIC_API_KEY</code>, <code>OPENAI_API_KEY</code> or <code>GEMINI_API_KEY</code> (experimental). Without one, the rules still run and the remaining sites are listed for you; a dependency with no pack has no rules, so it needs the key.</span></li>
       </ul>
       <p>Then it verifies with your compiler, the related tests, and your linter and formatter. With <code>--pr --yes</code> it pushes the branch and opens a draft PR once verification passes; without them it never pushes.</p>
@@ -313,77 +303,38 @@ footer .brand svg{width:22px;height:22px}
   <div class="head">
     <div class="label">03 / Real output</div>
     <h2>Real runs. Numbers as printed.</h2>
-    <p class="lead"><code>list</code> on a large public monorepo, then <code>check</code> and <code>fix</code> on <a href="https://github.com/uptide-dev/uptide/tree/main/fixtures/repos/storefront"><code>fixtures/repos/storefront</code></a>, a small pnpm workspace in the repository written to exercise Uptide: two packages on zod 3 and stripe 14, with a few tests.</p>
+    <p class="lead"><code>check</code> and <code>fix</code> on <a href="https://github.com/uptide-dev/uptide/tree/main/fixtures/repos/storefront"><code>fixtures/repos/storefront</code></a>, a small pnpm workspace in the repository written to exercise Uptide: two packages on zod 3 and stripe 14, with a few tests. Every block below is a run published in the uptide README and docs, and the site build checks it against them.</p>
   </div>
   <div class="output">
-    <figure>
-      <figcaption><b><code>list</code> on supabase/supabase.</b> No install, no compilation, no LLM.<sup><a href="#fn1" id="fnref1">1</a></sup></figcaption>
-      <div>
-        <div class="stats">
-          <div class="stat"><strong>273</strong><span class="label">outdated</span></div>
-          <div class="stat"><strong>116</strong><span class="label">major</span></div>
-          <div class="stat warn"><strong>12</strong><span class="label">urgent</span></div>
-          <div class="stat"><strong>15</strong><span class="label">groups</span></div>
-        </div>
-        <div class="out">
-          <div class="out-head"><span>supabase/supabase @ 9d1661d</span><span>rows trimmed, values unedited</span></div>
-<pre><span class="a">$</span> npx uptide list
-<strong>uptide list · supabase · pnpm · 20s</strong>
-
-273 outdated   116 major   100 minor   57 patch   15 groups   53 tooling
-
-<strong>PRIORITIES</strong>  <span class="d">most urgent first · advisories checked for 377 packages</span>
-  <strong>Urgent</strong>  12 · advisories, deprecations
-    @modelcontextprotocol/*   <span class="b">1 advisory (1 high), fixed in 1.31.0 (minor, same major)</span>
-      <span class="d">npx uptide check --group modelcontextprotocol --target @modelcontextprotocol/sdk@1.31.0</span>
-    simple-git                <span class="b">dev · 3 advisories (1 critical), needs 4.0.1 (major)</span>
-      <span class="d">npx uptide check simple-git --target simple-git@4.0.1</span>
-    smol-toml                 <span class="b">1 advisory (1 moderate), fixed in 1.9.0 (minor, same major)</span>
-      <span class="d">npx uptide check smol-toml --target smol-toml@1.9.0</span>
-    sharp                     <span class="b">dev · 1 advisory (1 high), fixed in 0.35.5 (patch, same major)</span>
-      <span class="d">npx uptide check sharp --target sharp@0.35.5</span>
-    katex                     <span class="b">1 advisory (1 low), fixed in 0.18.2 (minor, same major)</span>
-      <span class="d">npx uptide check katex --target katex@0.18.2</span>
-    + 7 more · --all
-  <strong>Worth planning</strong>  73 · unsupported, drift, blocking, majors behind · --all
-
-<strong>GROUPS</strong>  <span class="d">upgrade together</span>
-@sentry/*      3 packages   → 11.x   <span class="d">npx uptide check --group sentry</span>
-  @sentry/nextjs                                   10.59.0 → 11.4.0    major             59 files     91 calls
-  @sentry/react                                    10.59.0 → 11.4.0    major             5 files      8 calls
-  @sentry/tanstackstart-react                      10.59.0 → 11.4.0    major             3 files      2 calls
-ai + @ai-sdk/*   5 packages   → ai 7 · @ai-sdk/amazon-bedrock 5 · @ai-sdk/* 4 · @ai-sdk/mcp 2
-    <span class="d">npx uptide check --group ai</span>
-  @ai-sdk/openai                             2.0.2, 4.0.41 → 4.0.86    2 majors behind   2 files      1 call
-    2 versions in 2 workspaces
-  ai                                        5.0.52, 7.0.59 → 7.0.130   2 majors behind   53 files     75 calls
-    2 versions in 2 workspaces
-<span class="d">…</span></pre>
-        </div>
-      </div>
-    </figure>
-
     <figure>
       <figcaption><b>Before: <code>check</code>.</b> What breaks, where, and who can fix it.</figcaption>
       <div class="out">
         <div class="out-head"><span>fixtures/repos/storefront</span><span>uptide check</span></div>
-<pre><span class="a">$</span> npx uptide check zod stripe
+<pre data-source="docs/commands/check.md"><span class="a">$</span> npx uptide check zod stripe
 <strong>uptide check · storefront · pnpm · 8.5s</strong>
 
 zod                     3.25.76 → 4.6.5    major · latest on npm      <span class="g">verified</span>   <span class="b">✗ 28 breaking in 7 files</span>   24 auto-fixable · 4 need the agent (LLM)
 stripe (packages/api)   14.25.0 → 23.0.0   9 majors behind · latest on npm   <span class="g">verified</span>   <span class="b">✗ 4 breaking in 3 files</span>    1 auto-fixable · 3 need the agent (LLM)
 
 <strong>zod</strong>   28 breaking · compiled against 4.6.5: 28 new type errors
+<span class="d">  compiled 11 of 11 files in 2 workspaces with the repo's TypeScript 5.9.3</span>
   <span class="b">✗</span> New error API (required_error → error)   24 sites          auto-fixable
   <span class="b">✗</span> ZodTypeDef removed                       1 fix, 3 errors   needs the agent (LLM)
   <span class="b">✗</span> .ip() removed                            monitoring.ts:6   needs the agent (LLM)
   <span class="w">!</span> 15 deprecated calls (.uuid, .datetime, .email, ...)   8 auto-fixable
 
 <strong>stripe</strong>   4 breaking · compiled against 23.0.0: 4 new type errors
+<span class="d">  compiled 7 of 7 files in 1 workspace with the repo's TypeScript 5.9.3</span>
   <span class="b">✗</span> Test fixture casts widened                   renewal.test.ts:7   auto-fixable
   <span class="b">✗</span> Subscription billing period moved to items   2 sites             needs the agent (LLM)
   <span class="b">✗</span> apiVersion no longer matches the SDK         client.ts:9         needs the agent (LLM)
-    1 API change since 2023-10-16 affects your code</pre>
+    1 API change since 2023-10-16 affects your code
+
+<strong>Next</strong>
+  npx uptide fix zod                       <span class="d">migrate on a new branch, verify, no push</span>
+  npx uptide fix stripe                    <span class="d">migrate on a new branch, verify, no push</span>
+  npx uptide plan --only 'zod,stripe'      <span class="d">the order to upgrade in, with the effort</span>
+  npx uptide check zod stripe --details    <span class="d">every site and reason</span></pre>
       </div>
     </figure>
 
@@ -391,7 +342,7 @@ stripe (packages/api)   14.25.0 → 23.0.0   9 majors behind · latest on npm   
       <figcaption><b>After: <code>fix</code>,</b> one dependency at a time, each on its own verified branch.</figcaption>
       <div class="out">
         <div class="out-head"><span>fixtures/repos/storefront</span><span>uptide fix zod</span></div>
-<pre><span class="a">$</span> npx uptide fix zod
+<pre data-source="README.md"><span class="a">$</span> npx uptide fix zod
 <strong>uptide fix · zod 3.25.76 → 4.6.5 (latest on npm) · verification passed · 36s</strong>
 
   Risk      <span class="w">Medium: request validation in webhooks</span>
@@ -406,14 +357,14 @@ stripe (packages/api)   14.25.0 → 23.0.0   9 majors behind · latest on npm   
       <figcaption>No compiler sees this one: zod 4 words its default messages differently, and a test that asserted the old wording failed after the migration. Uptide updated it and says so in the pull request, so you can check that nothing else reads that text.</figcaption>
       <div class="out diff">
         <div class="out-head"><span>packages/shared/src/monitoring.test.ts</span><span>diff</span></div>
-<pre><span class="l del">-    expect(parsed.error?.issues[0]?.message).toBe('Required');</span><span class="l add">+    expect(parsed.error?.issues[0]?.message).toBe('Invalid input: expected string, received undefined');</span></pre>
+<pre data-source="docs/commands/fix.md"><span class="l del">-    expect(parsed.error?.issues[0]?.message).toBe('Required');</span><span class="l add">+    expect(parsed.error?.issues[0]?.message).toBe('Invalid input: expected string, received undefined');</span></pre>
       </div>
     </figure>
 
     <figure>
       <div class="out">
         <div class="out-head"><span>fixtures/repos/storefront</span><span>uptide fix stripe</span></div>
-<pre><span class="a">$</span> npx uptide fix stripe
+<pre data-source="docs/commands/fix.md"><span class="a">$</span> npx uptide fix stripe
 <strong>uptide fix · stripe 14.25.0 → 23.0.0 (latest on npm) · verification passed · 41s</strong>
 
   Risk      <span class="b">High: behavior changes</span>
@@ -428,12 +379,11 @@ stripe (packages/api)   14.25.0 → 23.0.0   9 majors behind · latest on npm   
     <figure>
       <div class="out diff">
         <div class="out-head"><span>packages/api/src/billing/renewal.ts</span><span>diff</span></div>
-<pre><span class="l del">-    renewsAt: new Date(subscription.current_period_end * 1000),</span><span class="l add">+    renewsAt: new Date(period.end * 1000),</span></pre>
+<pre data-source="docs/commands/fix.md"><span class="l del">-    renewsAt: new Date(subscription.current_period_end * 1000),</span><span class="l add">+    renewsAt: new Date(period.end * 1000),</span></pre>
       </div>
       <figcaption>The one type error left in both runs is the fixture's own, there on purpose: errors a repository already had are subtracted, never blamed on the upgrade.</figcaption>
     </figure>
 
-    <p class="fn" id="fn1"><a href="#fnref1">1</a> supabase/supabase at commit <a href="https://github.com/supabase/supabase/tree/9d1661dec1548ec5bf3ffb4f551376a7650c213e">9d1661dec1548ec5bf3ffb4f551376a7650c213e</a>, run with uptide 0.4.0 from npm (<code>npx uptide@latest list</code>) on 2026-10-06. Rows are trimmed, values are as printed. Latest versions and advisories come from the npm registry at run time, so a later run prints different numbers.</p>
   </div>
 </section>
 
@@ -447,7 +397,7 @@ stripe (packages/api)   14.25.0 → 23.0.0   9 majors behind · latest on npm   
   <div class="cols">
     <div>
       <h3>Verified packs and generic mode</h3>
-      <p><b>zod 3 → 4 and stripe have verified packs:</b> rules written for that dependency, a guide for the agent, behavior checks, and ground truth from a real upgrade that the pack is scored against.</p>
+      <p><b>A verified pack</b> holds rules written for that dependency, a guide for the agent, behavior checks, and ground truth from public repositories that made the upgrade, which the pack is scored against. The <a href="#packs">packs below</a> are verified.</p>
       <p><b>Every other dependency runs in generic mode.</b> A finding is breaking only when your compiler or the runtime probe confirms it, or when it is a <code>require()</code> of an ESM-only package or an import of a removed export. Everything else is listed as unconfirmed under <code>--details</code>. A generic <code>fix</code> uses the agent alone, under the same verification, and its pull request says no pack covers the package.</p>
     </div>
     <div>
@@ -468,6 +418,16 @@ stripe (packages/api)   14.25.0 → 23.0.0   9 majors behind · latest on npm   
       <p>Types and tests pass, but a new Stripe API version changes what Stripe sends. Server API changes are never rewritten by rule, and the pull request asks what only you can answer, such as which item's period counts when a subscription has several.</p>
     </div>
   </div>
+  <div class="packs" id="packs">
+    <h3 data-uptide="packs-heading">Verified packs</h3>
+    <p>Precision and recall are for breaking findings on each pack's ground truth, as <code>uptide pack test</code> recorded them in the pack's <code>verification.json</code>. A pack is verified with two or more public repositories and no false positive. This table is built from those files on every deploy, the same way as the <a href="https://github.com/uptide-dev/uptide#verified-packs">uptide README</a>.</p>
+  </div>
+  <div class="scroll" tabindex="0" role="region" aria-label="Verified packs table"><table class="leaves wide">
+    <thead><tr><th>Package</th><th>Range</th><th>Precision</th><th>Recall</th><th>Ground-truth repositories</th><th>Status</th></tr></thead>
+    <tbody data-uptide="packs-rows">
+      <tr><td colspan="6">Built from <a href="https://github.com/uptide-dev/uptide#verified-packs">uptide-dev/uptide</a> when the site is deployed.</td></tr>
+    </tbody>
+  </table></div>
 </section>
 
 <!-- 6. Safe to run -->
@@ -521,12 +481,15 @@ stripe (packages/api)   14.25.0 → 23.0.0   9 majors behind · latest on npm   
   </div>
   <div class="quote out">
     <div class="out-head"><span>uptide --help</span><span>privacy</span></div>
-<pre>Privacy:
+<pre data-source="docs/privacy.md" data-match="text">Privacy:
   Analysis runs locally. Code snippets go to your chosen LLM provider (Anthropic, OpenAI or Gemini), only
   for assisted fixes in `uptide fix`, and only with your own API key from ANTHROPIC_API_KEY,
   OPENAI_API_KEY or GEMINI_API_KEY: for each
   site the rules cannot migrate, the finding, the enclosing function and the compiler
   error. `uptide fix --no-llm` turns assisted fixes off. No account.
+  `check` and `verify` load the `typescript` package your repository installs (resolved from its
+  node_modules) to compile with, and never run your repository's scripts or other code outside
+  `fix`'s verification step.
   Anonymous telemetry is off by default and asks for consent in an interactive terminal.
   Set UPTIDE_TELEMETRY=0 to disable it. No IP, code, paths or repo names are collected.
   Other network use: your npm registry for package metadata and tarballs, npm's advisory
@@ -556,7 +519,7 @@ stripe (packages/api)   14.25.0 → 23.0.0   9 majors behind · latest on npm   
     <div class="row"><div class="k">Package managers</div><div class="v"><p>npm, pnpm and Yarn with the node-modules linker. Not Yarn Plug'n'Play.</p></div></div>
     <div class="row"><div class="k">Monorepos</div><div class="v"><p>Workspaces and pnpm catalogs. One row per package across workspaces, with version drift called out.</p></div></div>
     <div class="row"><div class="k">Languages</div><div class="v"><p>TypeScript, and JavaScript in the project (<code>allowJs</code>). In JavaScript the compiler type-checks (<code>checkJs</code> or <code>// @ts-check</code>) the compiler decides; elsewhere a site is breaking only when the runtime confirms it.</p></div></div>
-    <div class="row"><div class="k">Verified packs</div><div class="v"><p>zod 3 → 4, and stripe 14 and newer.</p></div></div>
+    <div class="row"><div class="k">Verified packs</div><div class="v"><p data-uptide="packs-list"><a href="#packs">The packs above</a>.</p></div></div>
     <div class="row"><div class="k">Generic mode</div><div class="v"><p>Every other dependency: <code>list</code>, <code>check</code>, and <code>fix</code> with the agent.</p></div></div>
     <div class="row"><div class="k">GitHub Action</div><div class="v"><p>For version-bot pull requests: detects zod and stripe upgrades and keeps one findings comment. With <code>fix</code> enabled, it pushes one verified commit to the bot's branch. <a href="https://github.com/uptide-dev/uptide/blob/main/docs/github-action.md">Setup</a>.</p></div></div>
     <div class="row"><div class="k">Runtime</div><div class="v"><p>Node 20 or newer.</p></div></div>

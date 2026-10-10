@@ -65,7 +65,7 @@
   --uptide-line: #D5D2C8;
   --uptide-text: #22211E;
   --uptide-body: #57554F;
-  /* The landing page's dim (#76736B) is a shade short of 4.5:1 on the page for small text. */
+  /* The same dim as the landing page: 4.5:1 or better for small text on the page. */
   --uptide-dim: #6A675F;
   --uptide-accent: #1D63C4;
 
